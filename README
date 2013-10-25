@@ -1,0 +1,11 @@
+A simple JSON viewer written with Qt 5.1
+Licensed under the GNU GPL v3.0
+
+Planned features include:
+ * Item editing
+ * Raw text editing
+ * Creating new JSON documents
+ * Saving changes
+ * Exporting to XML and NBT
+ * Reading from HTTP sources
+ * Colors
