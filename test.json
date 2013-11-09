@@ -1,0 +1,6 @@
+{
+	"bool" : false,
+	"int" : 42,
+	"string" : "Wheeeeeeee",
+	"array" : [true, 7, "poopy", ["thing 1", "thing 2"], {"key 1":"value 1", "key 2":"value 2"}]
+}
