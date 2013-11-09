@@ -39,9 +39,9 @@ public:
 private slots:
     void on_actionOpen_JSON_File_triggered();
 
-    void on_comboBox_currentIndexChanged(int index);
-
     void on_treeWidget_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
+
+    void on_typeSelector_currentIndexChanged(int index);
 
 private:
     Ui::MainWindow *ui;
@@ -50,7 +50,6 @@ private:
     QWidget *editWidgets[5];
     int activeEditor;
     void activateEditor(int index);
-    enum JSONType {JSON_OBJECT, JSON_ARRAY, JSON_DOUBLE, JSON_STRING, JSON_BOOL};
 
     void LoadJSON(QString fileName);
 

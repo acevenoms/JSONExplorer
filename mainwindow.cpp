@@ -31,11 +31,11 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    editWidgets[0] = ui->objectTable;
-    editWidgets[1] = ui->arrayList;
-    editWidgets[2] = ui->doubleValue;
-    editWidgets[3] = ui->stringEdit;
-    editWidgets[4] = ui->boolButton;
+    editWidgets[0] = ui->boolButton;
+    editWidgets[1] = ui->doubleValue;
+    editWidgets[2] = ui->stringEdit;
+    editWidgets[3] = ui->arrayList;
+    editWidgets[4] = ui->objectTable;
 
     editWidgets[0]->show();
     editWidgets[1]->hide();
@@ -174,6 +174,8 @@ void MainWindow::buildJsonTree(QTreeWidgetItem *parent, QJsonValue &obj, QString
     default:
         break;
     }
+
+    toAdd->setData(0, Qt::UserRole, QVariant(obj));
     parent->addChild(toAdd);
 }
 
@@ -215,11 +217,6 @@ QTreeWidgetItem *MainWindow::createJsonTreeLeaf(QTreeWidgetItem *parent, QJsonVa
     return leaf;
 }
 
-void MainWindow::on_comboBox_currentIndexChanged(int index)
-{
-    activateEditor(index);
-}
-
 void MainWindow::activateEditor(int index)
 {
     editWidgets[activeEditor]->hide();
@@ -230,5 +227,12 @@ void MainWindow::activateEditor(int index)
 
 void MainWindow::on_treeWidget_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous)
 {
+    QJsonValue jsonObj = current->data(0, Qt::UserRole).toJsonValue();
 
+    ui->typeSelector->setCurrentIndex(jsonObj.type() - 1);
+}
+
+void MainWindow::on_typeSelector_currentIndexChanged(int index)
+{
+    activateEditor(index);
 }
