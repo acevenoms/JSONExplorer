@@ -55,6 +55,7 @@ private:
 
     void buildJsonTree(QTreeWidgetItem *parent, QJsonValue &obj, QString key);
     QTreeWidgetItem *createJsonTreeLeaf(QTreeWidgetItem *parent, QJsonValue &obj, QString key);
+    QString renderJsonValue(QJsonValue obj);
 };
 
 #endif // MAINWINDOW_H

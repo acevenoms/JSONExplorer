@@ -96,10 +96,12 @@ void MainWindow::LoadJSON(QString fileName)
 
     QTreeWidgetItem *root = new QTreeWidgetItem();
     QString rootId = "root";
+    QJsonValue rootVal;
 
     if(doc->isArray())
     {
         QJsonArray array = doc->array();
+        rootVal = QJsonValue(array);
         int count = array.count();
         rootId += "["+QString::number(count)+"]";
 
@@ -112,6 +114,7 @@ void MainWindow::LoadJSON(QString fileName)
     else if(doc->isObject())
     {
         QJsonObject object = doc->object();
+        rootVal = QJsonValue(object);
         rootId += "{"+QString::number(object.count())+"}";
 
         for(QJsonObject::ConstIterator i = object.begin(); i != object.end(); ++i)
@@ -127,6 +130,7 @@ void MainWindow::LoadJSON(QString fileName)
     }
 
     root->setText(0, rootId);
+    root->setData(0, Qt::UserRole, QVariant(rootVal));
     ui->treeWidget->addTopLevelItem(root);
     ui->treeWidget->setCurrentItem(root);
 }
@@ -217,6 +221,40 @@ QTreeWidgetItem *MainWindow::createJsonTreeLeaf(QTreeWidgetItem *parent, QJsonVa
     return leaf;
 }
 
+QString MainWindow::renderJsonValue(QJsonValue obj)
+{
+    QString type = "unknown";
+    QString value = "unknown";
+
+    switch(obj.type())
+    {
+    case QJsonValue::Bool:
+        type = "Bool";
+        value = obj.toBool() ? "True" : "False";
+        break;
+    case QJsonValue::Double:
+        type = "Double";
+        value = QString::number(obj.toDouble());
+        break;
+    case QJsonValue::String:
+        type = "String";
+        value = "\""+obj.toString()+"\"";
+        break;
+    case QJsonValue::Array:
+        type = "Array";
+        value = "["+QString::number(obj.toArray().count())+"]";
+        break;
+    case QJsonValue::Object:
+        type = "Object";
+        value = "{"+QString::number(obj.toObject().count())+"}";
+        break;
+    default:
+        break;
+    }
+
+    return value + " : " + type;
+}
+
 void MainWindow::activateEditor(int index)
 {
     editWidgets[activeEditor]->hide();
@@ -228,6 +266,52 @@ void MainWindow::activateEditor(int index)
 void MainWindow::on_treeWidget_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous)
 {
     QJsonValue jsonObj = current->data(0, Qt::UserRole).toJsonValue();
+
+    QJsonValue::Type jsonType = jsonObj.type();
+
+    switch(jsonType)
+    {
+    case QJsonValue::Bool:
+        ui->boolButton->setChecked(jsonObj.toBool());
+        break;
+    case QJsonValue::Double:
+        ui->doubleValue->setValue(jsonObj.toDouble());
+        break;
+    case QJsonValue::String:
+        ui->stringEdit->document()->setPlainText(jsonObj.toString());
+        break;
+    case QJsonValue::Array:
+        {
+            QJsonArray arr = jsonObj.toArray();
+            int count = arr.count();
+
+            ui->arrayList->clear();
+
+            for(int i = 0; i < count; ++i)
+            {
+                QString label = renderJsonValue(arr.at(i));
+                ui->arrayList->addItem(label);
+            }
+        }
+        break;
+    case QJsonValue::Object:
+        {
+            QJsonObject obj = jsonObj.toObject();
+            ui->objectTable->setRowCount(obj.count());
+            int row = 0;
+            for(QJsonObject::ConstIterator i = obj.begin(); i != obj.end(); ++i, ++row)
+            {
+                QTableWidgetItem *keyItem = new QTableWidgetItem(i.key());
+                QJsonValue val = i.value();
+                QTableWidgetItem *valItem = new QTableWidgetItem(renderJsonValue(val));
+                ui->objectTable->setItem(row, 0, keyItem);
+                ui->objectTable->setItem(row, 1, valItem);
+            }
+        }
+        break;
+    default:
+        break;
+    }
 
     ui->typeSelector->setCurrentIndex(jsonObj.type() - 1);
 }
