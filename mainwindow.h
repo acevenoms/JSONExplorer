@@ -41,6 +41,8 @@ private slots:
 
     void on_comboBox_currentIndexChanged(int index);
 
+    void on_treeWidget_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
+
 private:
     Ui::MainWindow *ui;
     QJsonDocument *doc;
@@ -48,6 +50,7 @@ private:
     QWidget *editWidgets[5];
     int activeEditor;
     void activateEditor(int index);
+    enum JSONType {JSON_OBJECT, JSON_ARRAY, JSON_DOUBLE, JSON_STRING, JSON_BOOL};
 
     void LoadJSON(QString fileName);
 

@@ -128,6 +128,7 @@ void MainWindow::LoadJSON(QString fileName)
 
     root->setText(0, rootId);
     ui->treeWidget->addTopLevelItem(root);
+    ui->treeWidget->setCurrentItem(root);
 }
 
 void MainWindow::buildJsonTree(QTreeWidgetItem *parent, QJsonValue &obj, QString key = "")
@@ -225,11 +226,9 @@ void MainWindow::activateEditor(int index)
 
     activeEditor = index;
     editWidgets[activeEditor]->show();
+}
 
-    if(index == 2 || index == 4)
-        ui->valueGroupSpacer->changeSize(20, 0, QSizePolicy::Minimum, QSizePolicy::MinimumExpanding);
-    else
-        ui->valueGroupSpacer->changeSize(20, 0, QSizePolicy::Minimum, QSizePolicy::Minimum);
+void MainWindow::on_treeWidget_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous)
+{
 
-    ui->valueGroupSpacer->invalidate();
 }
