@@ -30,6 +30,20 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    editWidgets[0] = ui->objectTable;
+    editWidgets[1] = ui->arrayList;
+    editWidgets[2] = ui->doubleValue;
+    editWidgets[3] = ui->stringEdit;
+    editWidgets[4] = ui->boolButton;
+
+    editWidgets[0]->show();
+    editWidgets[1]->hide();
+    editWidgets[2]->hide();
+    editWidgets[3]->hide();
+    editWidgets[4]->hide();
+
+    activeEditor = 0;
 }
 
 MainWindow::~MainWindow()
@@ -56,7 +70,7 @@ void MainWindow::LoadJSON(QString fileName)
 
     QByteArray rawJson = jsonFile.readAll();
 
-    ui->textBrowser->setText(QString(rawJson));
+    ui->textEdit->setText(QString(rawJson));
 
     QJsonParseError error;
 
@@ -198,4 +212,24 @@ QTreeWidgetItem *MainWindow::createJsonTreeLeaf(QTreeWidgetItem *parent, QJsonVa
     leaf->setText(1, value);
 
     return leaf;
+}
+
+void MainWindow::on_comboBox_currentIndexChanged(int index)
+{
+    activateEditor(index);
+}
+
+void MainWindow::activateEditor(int index)
+{
+    editWidgets[activeEditor]->hide();
+
+    activeEditor = index;
+    editWidgets[activeEditor]->show();
+
+    if(index == 2 || index == 4)
+        ui->valueGroupSpacer->changeSize(20, 0, QSizePolicy::Minimum, QSizePolicy::MinimumExpanding);
+    else
+        ui->valueGroupSpacer->changeSize(20, 0, QSizePolicy::Minimum, QSizePolicy::Minimum);
+
+    ui->valueGroupSpacer->invalidate();
 }

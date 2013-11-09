@@ -39,9 +39,15 @@ public:
 private slots:
     void on_actionOpen_JSON_File_triggered();
 
+    void on_comboBox_currentIndexChanged(int index);
+
 private:
     Ui::MainWindow *ui;
     QJsonDocument *doc;
+
+    QWidget *editWidgets[5];
+    int activeEditor;
+    void activateEditor(int index);
 
     void LoadJSON(QString fileName);
 
